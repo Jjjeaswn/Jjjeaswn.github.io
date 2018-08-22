@@ -112,7 +112,7 @@
 <meta name="keywords" content="CNN,图片,特征,预训练模型">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何使用预训练的CNN网络提取图片特征">
-<meta property="og:url" content="http://yoursite.com/2018/07/20/avatar-features/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/22/avatar-features/index.html">
 <meta property="og:site_name" content="Jjjeaswn&#39;s blog">
 <meta property="og:description" content="如何使用预训练的CNN网络提取图片特征 想法 &amp;amp; 动机 同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 Face++ 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：    自拍 风景 佛 &amp;a">
 <meta property="og:locale" content="Chinese">
@@ -122,7 +122,7 @@
 <meta property="og:image" content="http://yoursite.com/imgs/20180720111931.png">
 <meta property="og:image" content="http://yoursite.com/imgs/20180720112015.png">
 <meta property="og:image" content="http://yoursite.com/imgs/20180720112042.png">
-<meta property="og:updated_time" content="2018-08-20T10:50:55.000Z">
+<meta property="og:updated_time" content="2018-08-22T06:36:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何使用预训练的CNN网络提取图片特征">
 <meta name="twitter:description" content="如何使用预训练的CNN网络提取图片特征 想法 &amp;amp; 动机 同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 Face++ 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：    自拍 风景 佛 &amp;a">
@@ -133,7 +133,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/20/avatar-features/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/22/avatar-features/"/>
 
 
 
@@ -235,6 +235,22 @@
         
         
           
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+  </li>
+        
+        
+        
+          
           <li class="menu-item menu-item-archives">
     <a href="/archives/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
@@ -288,7 +304,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/20/avatar-features/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/22/avatar-features/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jjjeaswn Wong">
@@ -330,7 +346,7 @@
                 
               
 
-              <time title="Created: 2018-07-20 12:13:54" itemprop="dateCreated datePublished" datetime="2018-07-20T12:13:54+08:00">2018-07-20</time>
+              <time title="Created: 2018-07-22 12:13:54" itemprop="dateCreated datePublished" datetime="2018-07-22T12:13:54+08:00">2018-07-22</time>
             
 
             
@@ -347,7 +363,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-20 18:50:55" itemprop="dateModified" datetime="2018-08-20T18:50:55+08:00">2018-08-20</time>
+                <time title="Modified: 2018-08-22 14:36:17" itemprop="dateModified" datetime="2018-08-22T14:36:17+08:00">2018-08-22</time>
               
             
           </span>
@@ -365,13 +381,6 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/深度学习/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a></span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/深度学习/应用/" itemprop="url" rel="index"><span itemprop="name">应用</span></a></span>
 
                 
                 
@@ -445,6 +454,7 @@
 </tbody>
 </table>
 <p>你也发现了，类别还能继续分下去。显然用人工的方式是没办法继续的，或者继续的成本太高，老板会把我炒掉。因为他可能突然提一个新需求“我们现在有一款新商品，你去抓堆优质用户出来，ddl明天。”</p>
+<a id="more"></a>
 <p>在接下去做下面的工作之前，首先声明一点，我是基于这样一种信念去做的：</p>
 <p>“其实人都特别不到哪里去”</p>
 <p>会用小朋友做头像的，大部分是妈妈吧。不管是年前的妈妈，还是中年的妈妈。我的朋友圈验证了这一点，或者说我基于自己的生活经验在猜测。</p>
@@ -535,14 +545,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/07/20/ng/" rel="next" title="机器学习课程分享">
+                <i class="fa fa-chevron-left"></i> 机器学习课程分享
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/20/ml-dl/" rel="prev" title="理论知识目录">
-                理论知识目录 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/20/mdp/" rel="prev" title="翻译：强化学习与控制">
+                翻译：强化学习与控制 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -623,8 +637,18 @@
                 
                 
                 <div class="site-state-item site-state-categories">
-                  
+                  <a href="/categories/index.html">
                     
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
                     
                       
                     
@@ -634,7 +658,7 @@
                     
                     <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">categories</span>
-                  
+                  </a>
                 </div>
               
 
@@ -642,7 +666,7 @@
                 
                 
                 <div class="site-state-item site-state-tags">
-                  
+                  <a href="/tags/index.html">
                     
                     
                       
@@ -659,9 +683,29 @@
                     
                       
                     
-                    <span class="site-state-item-count">7</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">tags</span>
-                  
+                  </a>
                 </div>
               
             </nav>
@@ -669,6 +713,20 @@
 
           
 
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/Jjjeaswn" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wangzixin1113@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
           
 
           

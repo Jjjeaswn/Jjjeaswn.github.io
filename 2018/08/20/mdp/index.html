@@ -109,21 +109,22 @@
 
 
   <meta name="description" content="Part III 强化学习与控制 我们现在开始学习强化学习和适应性控制。 在监督学习上，我们的算法尝试去让它们的输出跟训练集中的标签 \(y\) 相似。对于每个 \(x​\)，标签给出了一个无偏差的“标准答案”。但在很多序列决策和控制问题上，很难提供这样一个显式的监督给学习算法。比如，我们弄了个四条腿的机器人，想尝试编程让它走起来，但起初我们对什么是“正确”的动作，哪些动作能让它走起来没有任何想法">
+<meta name="keywords" content="RL,MDP,值迭代,策略迭代">
 <meta property="og:type" content="article">
 <meta property="og:title" content="翻译：强化学习与控制">
 <meta property="og:url" content="http://yoursite.com/2018/08/20/mdp/index.html">
 <meta property="og:site_name" content="Jjjeaswn&#39;s blog">
 <meta property="og:description" content="Part III 强化学习与控制 我们现在开始学习强化学习和适应性控制。 在监督学习上，我们的算法尝试去让它们的输出跟训练集中的标签 \(y\) 相似。对于每个 \(x​\)，标签给出了一个无偏差的“标准答案”。但在很多序列决策和控制问题上，很难提供这样一个显式的监督给学习算法。比如，我们弄了个四条腿的机器人，想尝试编程让它走起来，但起初我们对什么是“正确”的动作，哪些动作能让它走起来没有任何想法">
 <meta property="og:locale" content="Chinese">
-<meta property="og:image" content="http://yoursite.com/2018/08/20/mdp/assets/mdp_img1.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/20/mdp/assets/mdp_img2.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/20/mdp/assets/mdp_img3.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/20/mdp/assets/mdp_img4.png">
-<meta property="og:updated_time" content="2018-08-22T04:15:03.000Z">
+<meta property="og:image" content="http://yoursite.com/assets/mdp_img1.png">
+<meta property="og:image" content="http://yoursite.com/assets/mdp_img2.png">
+<meta property="og:image" content="http://yoursite.com/assets/mdp_img3.png">
+<meta property="og:image" content="http://yoursite.com/assets/mdp_img4.png">
+<meta property="og:updated_time" content="2018-08-22T06:35:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="翻译：强化学习与控制">
 <meta name="twitter:description" content="Part III 强化学习与控制 我们现在开始学习强化学习和适应性控制。 在监督学习上，我们的算法尝试去让它们的输出跟训练集中的标签 \(y\) 相似。对于每个 \(x​\)，标签给出了一个无偏差的“标准答案”。但在很多序列决策和控制问题上，很难提供这样一个显式的监督给学习算法。比如，我们弄了个四条腿的机器人，想尝试编程让它走起来，但起初我们对什么是“正确”的动作，哪些动作能让它走起来没有任何想法">
-<meta name="twitter:image" content="http://yoursite.com/2018/08/20/mdp/assets/mdp_img1.png">
+<meta name="twitter:image" content="http://yoursite.com/assets/mdp_img1.png">
 
 
 
@@ -227,6 +228,22 @@
           <li class="menu-item menu-item-home">
     <a href="/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
   </li>
         
         
@@ -344,11 +361,29 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-22 12:15:03" itemprop="dateModified" datetime="2018-08-22T12:15:03+08:00">2018-08-22</time>
+                <time title="Modified: 2018-08-22 14:35:55" itemprop="dateModified" datetime="2018-08-22T14:35:55+08:00">2018-08-22</time>
               
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/强化学习/" itemprop="url" rel="index"><span itemprop="name">强化学习</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -382,6 +417,7 @@
 <p>在监督学习上，我们的算法尝试去让它们的输出跟训练集中的标签 <span class="math inline">\(y\)</span> 相似。对于每个 <span class="math inline">\(x​\)</span>，标签给出了一个无偏差的“标准答案”。但在很多序列决策和控制问题上，很难提供这样一个显式的监督给学习算法。比如，我们弄了个四条腿的机器人，想尝试编程让它走起来，但起初我们对什么是“正确”的动作，哪些动作能让它走起来没有任何想法，自然而然无法提供给算法显式的监督让它学会行走。</p>
 <p>在强化学习框架，我们反过来只提供给我们的算法一个奖励函数，指示它当前做得是好是坏。在上面四条腿行走的例子，如果机器人向前走，激励函数可能给它正面反馈，如果退后或者迭代，激励函数给它负面反馈。如果通过选择动作获取最大的奖励自然就成了算法的任务了。</p>
 <p>强化学习有很多成功的应用，包括自动驾驶直升机、机器人腿定位、移动网络路由、市场策略选择、工厂控制和高效的网页索引。我们将会从马尔可夫决策过程（ MDP）的定义开始学习强化学习，它提供强化学习问题里常常拥有的形式。</p>
+<a id="more"></a>
 <h2 id="马尔可夫决策过程mdp">1 马尔可夫决策过程（MDP)</h2>
 <p>马尔可夫决策过程（MDP)涉及到这样一组东西 <span class="math inline">\((S,A,\{P_{sa}\},\gamma,R)\)</span></p>
 <ul>
@@ -482,17 +518,17 @@ P_{sa}(s&#39;) = \frac{\#我们在状态{s}执行动作a到达{s&#39;}的次数}
 <p>将连续状态MDP问题中的状态空间离散化可能是最简单的方式了，然后用上面的值迭代或策略迭代求解。</p>
 <p>比如，对于二维的状态 <span class="math inline">\((s_1,s_2)\)</span>，我们可以使用格子来离散化状态空间：</p>
 <figure>
-<img src="assets/mdp_img1.png" alt="Fig.1"><figcaption>Fig.1</figcaption>
+<img src="/assets/mdp_img1.png" alt="Fig.1"><figcaption>Fig.1</figcaption>
 </figure>
 <p>这里，每个格子表示一个单独的离散状态 <span class="math inline">\(\bar{s}\)</span> 。接着我们可以通过离散的 <span class="math inline">\((\bar{S}, A, \{P_{\bar{s}a} \}, \gamma, R )\)</span>，其中 <span class="math inline">\(\bar{S}\)</span> 是离散状态集合。<span class="math inline">\(\{ P_{\bar{s}a} \}\)</span> 是我们在离散空间上的状态转移概率。我们可以用值迭代或者策略迭代求解最优值函数 <span class="math inline">\(V^*(\bar{s})\)</span> 或者最优策略 <span class="math inline">\(\pi^*(\bar{s})\)</span> 。当我们的真实系统处在某个连续值状态 <span class="math inline">\(s \in S\)</span> 中时，我们需要选择一个动作去执行，我们计算对应的离散状态 <span class="math inline">\(\bar{s}\)</span>，然后执行动作 <span class="math inline">\(\pi^*(\bar{s})\)</span> 。</p>
 <p>在很多问题上，离散方法是可行的。不过有两个缺点。第一，它得到的结果 <span class="math inline">\(V^*\)</span> (或者 <span class="math inline">\(\pi^*\)</span>) 都是对实际问题相当naive的简化。确切地说，它假设值函数在每个离散的区间中得到一个固定的值。</p>
 <p>为了更好地理解上述假设的局限，可以考虑一个监督学习问题，去拟合下图的数据集：</p>
 <figure>
-<img src="assets/mdp_img2.png" alt="Fig.2"><figcaption>Fig.2</figcaption>
+<img src="/assets/mdp_img2.png" alt="Fig.2"><figcaption>Fig.2</figcaption>
 </figure>
 <p>如你所见，线性回归应该可以很好地解决此问题。但是，如果我们对 x 轴进行离散表示，并规定每个离散区间只能对应一个固定值，我们拟合的结果看起来就像：</p>
 <figure>
-<img src="assets/mdp_img3.png" alt="Fig.3"><figcaption>Fig.3</figcaption>
+<img src="/assets/mdp_img3.png" alt="Fig.3"><figcaption>Fig.3</figcaption>
 </figure>
 <p>对于很多光滑的函数，这样每个区间有个固定值的并不能很好表示它们。如此一来结果会很粗糙，在不同的区间泛化效果也不理想。用这样的方式，我们可能需要很细微的颗粒度（每个格子都足够小）才能得到一个比较好的近似结果。</p>
 <p>另一个缺点是这样的表示会导致纬度诅咒。假设 <span class="math inline">\(S = \mathbb{R}^n\)</span> ，我们把这 n 维状态每个都离散成 k 个值。这时我们得到的状态空间值的总个数是 <span class="math inline">\(k^n\)</span> 。总个数是随 n 指数级增长的，因此无法很好地适用大规模的问题。例如，有个10维的状态，如果我们把每个纬度都离散成100个值，我们有 $100^{10} = 10^{20} $个状态值，对于现在的桌面计算机来说太大了。</p>
@@ -502,7 +538,7 @@ P_{sa}(s&#39;) = \frac{\#我们在状态{s}执行动作a到达{s&#39;}的次数}
 <h4 id="使用模型或模拟器">4.2.1 使用模型或模拟器</h4>
 <p>去开发值函数近似的方法，我们会先假设有一个<strong>模型</strong>或者<strong>模拟器</strong>。简单地讲，我们可以将模拟器堪称一个黑盒，它接受一个任意状态的值（连续值） <span class="math inline">\(s_t\)</span> 和动作 <span class="math inline">\(a_t\)</span>，然后根据状态转移概率 <span class="math inline">\(P_{s_t a_t}\)</span> 返回下一个状态 <span class="math inline">\(s_{t+1}\)</span> 。</p>
 <figure>
-<img src="assets/mdp_img4.png" alt="Fig.4"><figcaption>Fig.4</figcaption>
+<img src="/assets/mdp_img4.png" alt="Fig.4"><figcaption>Fig.4</figcaption>
 </figure>
 <p>有很多途径可以得到这样一个模型，之一是使用物理模拟器。比如，在倒立摆问题中，已知 <span class="math inline">\(t\)</span> 时刻的状态和选择执行的动作 <span class="math inline">\(a\)</span>，假设我们知道整个系统的参数（摆杆的长度、质量等），模拟器使用物理定律计算小车／摆杆在时刻 <span class="math inline">\(t + 1\)</span> 的位置和朝向。使用现成的软件包，提供机械系统的完整描述、当前状态 <span class="math inline">\(s_t\)</span> 和动作 <span class="math inline">\(a_t\)</span>，我们可以计算未来很短时间内的状态 <span class="math inline">\(s_{t+1}\)</span> 。</p>
 <p>另一种方式是从马尔可夫决策过程中收集数据学习，得到一个模型。比如我们进行了 <span class="math inline">\(m\)</span> 次<strong>试验</strong>，每次试验里我们都重复选取动作执行 <span class="math inline">\(T\)</span> 个时刻。选取动作可以是随机、通过某种策略或通过其他途径。然后我们观察到如下 m 个状态序列：</p>
@@ -599,6 +635,18 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/RL/" rel="tag"># RL</a>
+          
+            <a href="/tags/MDP/" rel="tag"># MDP</a>
+          
+            <a href="/tags/值迭代/" rel="tag"># 值迭代</a>
+          
+            <a href="/tags/策略迭代/" rel="tag"># 策略迭代</a>
+          
+        </div>
+      
 
       
       
@@ -608,8 +656,8 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/20/ng/" rel="next" title="机器学习课程分享">
-                <i class="fa fa-chevron-left"></i> 机器学习课程分享
+              <a href="/2018/07/22/avatar-features/" rel="next" title="如何使用预训练的CNN网络提取图片特征">
+                <i class="fa fa-chevron-left"></i> 如何使用预训练的CNN网络提取图片特征
               </a>
             
           </div>
@@ -696,8 +744,18 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
                 
                 
                 <div class="site-state-item site-state-categories">
-                  
+                  <a href="/categories/index.html">
                     
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
                     
                       
                     
@@ -707,7 +765,7 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
                     
                     <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">categories</span>
-                  
+                  </a>
                 </div>
               
 
@@ -715,7 +773,7 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
                 
                 
                 <div class="site-state-item site-state-tags">
-                  
+                  <a href="/tags/index.html">
                     
                     
                       
@@ -732,9 +790,29 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
                     
                       
                     
-                    <span class="site-state-item-count">7</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">tags</span>
-                  
+                  </a>
                 </div>
               
             </nav>
@@ -742,6 +820,20 @@ E_{s&#39;}(V(s&#39;)) \approx V(E_{s&#39;}(s&#39;)) \tag 9 \\
 
           
 
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/Jjjeaswn" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:wangzixin1113@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
           
 
           

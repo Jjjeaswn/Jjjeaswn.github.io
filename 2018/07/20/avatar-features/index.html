@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="Chinese">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.4.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.4.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.4.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="如何使用预训练的CNN网络提取图片特征 想法 &amp;amp; 动机 同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 Face++ 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：    自拍 风景 佛 &amp;a">
+<meta name="keywords" content="CNN,图片,特征,预训练模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何使用预训练的CNN网络提取图片特征">
+<meta property="og:url" content="http://yoursite.com/2018/07/20/avatar-features/index.html">
+<meta property="og:site_name" content="Jjjeaswn&#39;s blog">
+<meta property="og:description" content="如何使用预训练的CNN网络提取图片特征 想法 &amp;amp; 动机 同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 Face++ 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：    自拍 风景 佛 &amp;a">
+<meta property="og:locale" content="Chinese">
+<meta property="og:image" content="http://yoursite.com/imgs/exception_pool_result.png">
+<meta property="og:image" content="http://yoursite.com/imgs/exception_pool_result_30_cluster.png">
+<meta property="og:image" content="http://yoursite.com/imgs/20180720111827.png">
+<meta property="og:image" content="http://yoursite.com/imgs/20180720111931.png">
+<meta property="og:image" content="http://yoursite.com/imgs/20180720112015.png">
+<meta property="og:image" content="http://yoursite.com/imgs/20180720112042.png">
+<meta property="og:updated_time" content="2018-08-20T10:50:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何使用预训练的CNN网络提取图片特征">
+<meta name="twitter:description" content="如何使用预训练的CNN网络提取图片特征 想法 &amp;amp; 动机 同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 Face++ 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：    自拍 风景 佛 &amp;a">
+<meta name="twitter:image" content="http://yoursite.com/imgs/exception_pool_result.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/20/avatar-features/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>如何使用预训练的CNN网络提取图片特征 | Jjjeaswn's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="Chinese">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jjjeaswn's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/20/avatar-features/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jjjeaswn Wong">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jjjeaswn's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何使用预训练的CNN网络提取图片特征
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-07-20 12:13:54" itemprop="dateCreated datePublished" datetime="2018-07-20T12:13:54+08:00">2018-07-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-08-20 18:50:55" itemprop="dateModified" datetime="2018-08-20T18:50:55+08:00">2018-08-20</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/深度学习/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/深度学习/应用/" itemprop="url" rel="index"><span itemprop="name">应用</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="如何使用预训练的cnn网络提取图片特征">如何使用预训练的CNN网络提取图片特征</h1>
+<h2 id="想法-动机">想法 &amp; 动机</h2>
+<p>同事最近获取了一批微信用户数据，决定挖一挖里面潜在的内容。先是用 <code>Face++</code> 跑了一遍性别、年龄，但发现很多人的头像并不是他们本人，甚至不是人物，就算是本人也是严重后期过的，跑出来的解决没多大参考意义。于是我们仔细翻阅了一批样本图片，发现其实每个人设置头像的出发点可能不同，但却并非无迹可寻，大致可以分为：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">自拍</th>
+<th style="text-align: center;">风景</th>
+<th style="text-align: center;">佛 &amp; 非主流</th>
+<th style="text-align: center;">其他</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">土豪大叔自拍</td>
+<td style="text-align: center;">低档风景</td>
+<td style="text-align: center;">辣眼睛艺术字体</td>
+<td style="text-align: center;">宠物</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">圣光自拍</td>
+<td style="text-align: center;">小清新风景</td>
+<td style="text-align: center;">化妆品</td>
+<td style="text-align: center;">动物</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">小清新自拍</td>
+<td style="text-align: center;">高档风景</td>
+<td style="text-align: center;">南无哦弥陀佛</td>
+<td style="text-align: center;">卡通人物</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">油腻大叔自拍</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">小朋友头像</td>
+</tr>
+</tbody>
+</table>
+<p>你也发现了，类别还能继续分下去。显然用人工的方式是没办法继续的，或者继续的成本太高，老板会把我炒掉。因为他可能突然提一个新需求“我们现在有一款新商品，你去抓堆优质用户出来，ddl明天。”</p>
+<p>在接下去做下面的工作之前，首先声明一点，我是基于这样一种信念去做的：</p>
+<p>“其实人都特别不到哪里去”</p>
+<p>会用小朋友做头像的，大部分是妈妈吧。不管是年前的妈妈，还是中年的妈妈。我的朋友圈验证了这一点，或者说我基于自己的生活经验在猜测。</p>
+<p><strong>好</strong></p>
+<p>下面进入正题，如何使用预训练的CNN网络提取图片特征。</p>
+<h2 id="预训练网络pre-trained-network">预训练网络（Pre-trained network)</h2>
+<p>现在的神经网络都很大，参数很多，虽然我们可以用 <code>Keras</code> 很快写出一个模型，但是把这个模型调到能用还是…算了。</p>
+<p>老板不充钱，没GPU云服务器用☹️☹️</p>
+<p>好在很多我们耳熟能详的CNN网络都放出预先训练好的权重，我们可以直接下载下来，load到模型里，直接做预测，跳过训练的阶段。</p>
+<p>开源大法好😘</p>
+<p>除了做预测任务，我们还能截取网络的中间层结果。卷机神经网络的中间层结果可以被当作图片的<code>特征</code>使用。然后我现在想用这些<code>特征</code>来粗略地代表每个实实在在的<code>用户</code>，并把他们<code>分类</code>。</p>
+<p>我选择的是<code>XceptionNet</code>。</p>
+<h2 id="截取中间结果">截取中间结果</h2>
+<p>直接贴代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.applications.xception <span class="keyword">import</span> Xception</span><br><span class="line"><span class="keyword">from</span> keras.applications.xception <span class="keyword">import</span> preprocess_input</span><br><span class="line"><span class="keyword">from</span> keras.preprocessing <span class="keyword">import</span> image</span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Model</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">base_model = Xception(weights=<span class="string">'imagenet'</span>) <span class="comment"># 这一步会自动下载预训练的权重文件</span></span><br><span class="line"></span><br><span class="line">print(base_model.summary()) <span class="comment"># 你可以调用该方法查看以下网络的结构</span></span><br><span class="line"></span><br><span class="line">model = Model(inputs=base_model.input, outputs=base_model.get_layer(<span class="string">'avg_pool'</span>).output) <span class="comment"># 截取 avg_pool 层的输出</span></span><br><span class="line"></span><br><span class="line">limit = <span class="number">1000</span> <span class="comment"># 样本数量</span></span><br><span class="line">X_img = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img <span class="keyword">in</span> random.sample(os.listdir(<span class="string">'imgs'</span>), limit):</span><br><span class="line">	print(img)</span><br><span class="line">	img_path = <span class="string">'imgs/'</span> + img</span><br><span class="line">	img = image.load_img(img_path, target_size=(<span class="number">299</span>, <span class="number">299</span>))</span><br><span class="line">	x = image.img_to_array(img)</span><br><span class="line">	X_img.append(x)</span><br><span class="line"></span><br><span class="line">X_img = preprocess_input(np.array(X_img))</span><br><span class="line">img_features = model.predict(X_img, batch_size=<span class="number">10</span>, verbose=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">features_high_dim = []</span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> img_features:</span><br><span class="line">  features_high_dim.append(f.flatten()) <span class="comment"># 这步其实不是必须的，如果输出特征就是扁平的话</span></span><br><span class="line"></span><br><span class="line">pd.DataFrame(np.array(features_high_dim)).to_csv(<span class="string">'avg_pool_features.csv'</span>)</span><br></pre></td></tr></table></figure>
+<p>何谓扁平？</p>
+<p>一个张量的纬度是 d0 * d1 * d2 <em>…</em>dN<em>1 这样的，比如一个三维的数据可以是 100 </em> 30 * 20<em>1, 这个时候第0维是100，第1维是30，第2维是20。数据是一个立方体或超立方体的形象，我们把它拍平，这个时候数据就变成 60000 </em> 1的样子。</p>
+<p>上面的栗子我们保留第0维，拍平剩下的纬度。</p>
+<p>最后的1只是我随意加的，如果妨碍你理解可以去掉，如果能帮助你理解保留。</p>
+<p>为什么是从第0维开始算。</p>
+<h2 id="数据降纬">数据降纬</h2>
+<p>做数据降维的目的一般有两个：<strong>压缩数据</strong> &amp; <strong>数据可视化</strong>。</p>
+<p>我们这里是想看下数据到底可不可分（类），属于第二个。</p>
+<p>我选取的算法是 <code>t-SNE</code>，当然还有其他算法，比如 <code>PCA</code> 什么的。</p>
+<p>上一步我们截取 <code>XceptionNet</code> 最后 <code>FC</code> 层前一层的 <code>AVG_POOL</code> 输出是2028纬的，如此高纬的数据我们没发直观的感受数据到底是否可分，我们可以选择把它降到 2 -3 纬，下面是代码跟结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.manifold <span class="keyword">import</span> TSNE</span><br><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plot</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">features_high_dim = pd.read_csv(<span class="string">'avg_pool_features.csv'</span>)</span><br><span class="line"></span><br><span class="line">features_2_dim = TSNE(n_components=<span class="number">2</span>).fit_transform(np.array(features_high_dim.iloc[:, <span class="number">1</span>:<span class="number">-1</span>])) <span class="comment"># 因为前面没做处理，高纬数据的第一维是行号，最后一维是人物的id，这里去掉</span></span><br><span class="line"></span><br><span class="line">plot.scatter(features_2_dim[:, <span class="number">0</span>], features_2_dim[:, <span class="number">1</span>], c=label)</span><br><span class="line">plot.show()</span><br></pre></td></tr></table></figure>
+<figure>
+<img src="/imgs/exception_pool_result.png" alt="exception_pool_result"><figcaption>exception_pool_result</figcaption>
+</figure>
+<p>我们看到数据有聚集在不同区域的趋势，所以可以认为这堆图片是可分，虽然分界线有些模糊。</p>
+<h2 id="聚类分析">聚类分析</h2>
+<p>可视化可以结合无监督学习来做，加个聚类算法上去，比如 <code>KMeans</code>。</p>
+<p>上面的图片有点单调，我们随意加点色彩，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">nb_cluster = <span class="number">30</span> <span class="comment"># 随意指定30个类</span></span><br><span class="line"></span><br><span class="line">cluster = KMeans(n_clusters=nb_cluster)</span><br><span class="line">label = cluster.fit(features_2_dim).labels_</span><br><span class="line"></span><br><span class="line">plot.scatter(features_2_dim[:, <span class="number">0</span>], features_2_dim[:, <span class="number">1</span>], c=label) <span class="comment"># 加上分类标准</span></span><br><span class="line">plot.show()</span><br></pre></td></tr></table></figure>
+<figure>
+<img src="/imgs/exception_pool_result_30_cluster.png" alt="Kmeans分类结果"><figcaption>Kmeans分类结果</figcaption>
+</figure>
+<p>想看下分类的结果如何，我们可以根据上面<code>KMeans</code>给出的标签把图片移到不同的文件夹里。</p>
+<p>像这样</p>
+<p>佛系人生 <img src="/imgs/20180720111827.png" alt="佛系"></p>
+<p>瞎jb拍风景 <img src="/imgs/20180720111931.png" alt="风景"></p>
+<p>油腻的大叔 <img src="/imgs/20180720112015.png" alt="大叔"></p>
+<p>猫猫狗狗 火箭？ <img src="/imgs/20180720112042.png" alt="动物、宠物"></p>
+<p>效果还行，基本能把同类的归到一起🐶，这也验证了我开始的想法。</p>
+<p>大部份人都没啥特别的，连他们的头像也是。</p>
+<h2 id="结下来要做什么">结下来要做什么</h2>
+<p>以上都是我用1000个样本做的事，接下来要多100w用户求特征做分类。按我机器的性能，提取一张图片的特征值需要1.2秒。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">100w * 1.2s = 120ws</span><br><span class="line"></span><br><span class="line">120ws / 3.6ks = 333.33h</span><br><span class="line"></span><br><span class="line">333.33h / 24h/t = 13.8t</span><br></pre></td></tr></table></figure>
+<p>嗯,我的机器不吃不喝全干这件事要13.8天。</p>
+<p>不说了，找boss开机器去</p>
+<p>欢迎大家关注我的文章，后面会讲怎么微调模型直接产出分类。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+            <a href="/tags/图片/" rel="tag"># 图片</a>
+          
+            <a href="/tags/特征/" rel="tag"># 特征</a>
+          
+            <a href="/tags/预训练模型/" rel="tag"># 预训练模型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/20/ml-dl/" rel="prev" title="理论知识目录">
+                理论知识目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Jjjeaswn Wong</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何使用预训练的cnn网络提取图片特征"><span class="nav-number">1.</span> <span class="nav-text">如何使用预训练的CNN网络提取图片特征</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#想法-动机"><span class="nav-number">1.1.</span> <span class="nav-text">想法 &amp; 动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预训练网络pre-trained-network"><span class="nav-number">1.2.</span> <span class="nav-text">预训练网络（Pre-trained network)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#截取中间结果"><span class="nav-number">1.3.</span> <span class="nav-text">截取中间结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据降纬"><span class="nav-number">1.4.</span> <span class="nav-text">数据降纬</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#聚类分析"><span class="nav-number">1.5.</span> <span class="nav-text">聚类分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结下来要做什么"><span class="nav-number">1.6.</span> <span class="nav-text">结下来要做什么</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jjjeaswn Wong</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.4.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -120,7 +120,7 @@
 <meta property="og:image" content="http://yoursite.com/assets/mdp_img2.png">
 <meta property="og:image" content="http://yoursite.com/assets/mdp_img3.png">
 <meta property="og:image" content="http://yoursite.com/assets/mdp_img4.png">
-<meta property="og:updated_time" content="2018-08-22T06:35:55.000Z">
+<meta property="og:updated_time" content="2018-08-22T07:13:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="翻译：强化学习与控制">
 <meta name="twitter:description" content="Part III 强化学习与控制 我们现在开始学习强化学习和适应性控制。 在监督学习上，我们的算法尝试去让它们的输出跟训练集中的标签 \(y\) 相似。对于每个 \(x​\)，标签给出了一个无偏差的“标准答案”。但在很多序列决策和控制问题上，很难提供这样一个显式的监督给学习算法。比如，我们弄了个四条腿的机器人，想尝试编程让它走起来，但起初我们对什么是“正确”的动作，哪些动作能让它走起来没有任何想法">
@@ -361,7 +361,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-22 14:35:55" itemprop="dateModified" datetime="2018-08-22T14:35:55+08:00">2018-08-22</time>
+                <time title="Modified: 2018-08-22 15:13:00" itemprop="dateModified" datetime="2018-08-22T15:13:00+08:00">2018-08-22</time>
               
             
           </span>
@@ -425,7 +425,7 @@
 <li><span class="math inline">\(A\)</span> 是一组<strong>动作</strong>的集合。（比如，所有你推动直升机控制杆的所有可能方向。一般是离散的，空间已知）</li>
 <li><span class="math inline">\(P_{sa}\)</span>是状态转移概率 。对于每个可能的<span class="math inline">\(s\in S\)</span>和动作<span class="math inline">\(a\in A\)</span>，<span class="math inline">\(P_{sa}\)</span>是一个状态空间上的分布。详情后面我们会讨论，简单地讲，<span class="math inline">\(P_{sa}\)</span>给出如果在状态<span class="math inline">\(s\)</span>的时候我们选择动作<span class="math inline">\(a\)</span>所能达到状态的概率分布。（一般是未知的，或用经验概率近似）</li>
 <li><span class="math inline">\(\gamma \in [0,1)\)</span> 称作<strong>折扣因子</strong> （超参数）。</li>
-<li><p>$R:S A  $ 是<strong>奖励函数</strong> 。（有时奖励函数只写成状态的函数 $R:S  $ ，奖励函数是已知的）</p></li>
+<li><p>$R:S \times A \rightarrow \mathbb{R} $ 是<strong>奖励函数</strong> 。（有时奖励函数只写成状态的函数 $R:S \rightarrow \mathbb{R} $ ，奖励函数是已知的）</p></li>
 </ul>
 <p>MDP的动态过程如下：Agent（动作的执行者）从环境状态 <span class="math inline">\(s_0\)</span> 开始，从动作集合<span class="math inline">\(A\)</span>中选取一个动作<span class="math inline">\(a_0\)</span>。该动作会导致环境状态随机变化，该变化服从<span class="math inline">\(P_{sa}\)</span>这个状态转移概率分布，动作结束后我们得到新的状态<span class="math inline">\(s_1\)</span>, 然后 Agent 再选取一个动作<span class="math inline">\(a_1\)</span>，得到状态<span class="math inline">\(s_2\)</span>， Agent 接着选取<span class="math inline">\(a_2\)</span>… 就这样，我们得到一个序列：</p>
 <p><span class="math display">\[
@@ -448,7 +448,7 @@ V^\pi(s) = E[R(s_0)+\gamma R(s_1)+\gamma^2 R(s_2)+...|s_0=s,\pi]
 <p><span class="math display">\[
 V^\pi(s) = R(s) + \gamma \sum_{s&#39; \in S} P_{s\pi(s)}(s&#39;)V^\pi(s&#39;)
 \]</span> 就是说从状态 <span class="math inline">\(s\)</span> 开始折扣奖励的期望和 <span class="math inline">\(V^\pi(s)\)</span> 由两项组成：第一项，<strong>即时奖励</strong> <span class="math inline">\(R(s)\)</span> 我们在开始状态 s 获得的奖励，然后，第二项，未来折扣的奖励与对应状态出现概率乘积之和。更详细地检查第二项，我们看到其中的求和项可以重写成未来状态 <span class="math inline">\(s&#39;\)</span> 其奖励之期望 <span class="math inline">\(E_{s&#39;\sim{P_{s\pi(s)}}}[V^\pi(s&#39;)]\)</span>。其中未来状态 <span class="math inline">\(s&#39;\)</span> 服从分布 <span class="math inline">\(P_{s\pi(s)}\)</span>，该分布是我们从先前状态 <span class="math inline">\(s\)</span> 依据策略执行动作 <span class="math inline">\(\pi(s)\)</span> 之后会得到的。综上，方程的第二项给出MDP第一步动作执行之后，所能获得的折扣奖励期望和。（这里的折扣奖励是指 <span class="math inline">\(\gamma V^\pi(s&#39;)\)</span> ，其实翻译成折扣状态值更恰当，因为并非由奖励函数 <span class="math inline">\(R\)</span> 给出）</p>
-<p>我们可以使用贝尔曼方程组高效求解值函数 <span class="math inline">\(V^\pi\)</span>。特别地，在有限状态MDP中（$|S| &lt; $），我们可以为 <span class="math inline">\(V^\pi(s)\)</span> 的每个状态 <span class="math inline">\(s\)</span> 写下一条方程，得到一个 <span class="math inline">\(|S|\)</span> 个变量的 <span class="math inline">\(|S|\)</span> 条方程的方程组，高效求解所有状态的值 <span class="math inline">\(V^\pi(s)\)</span>。（即由于策略已确定， <span class="math inline">\(V^\pi(s_i)\)</span> 可当作变量，<span class="math inline">\(R(s_i)\)</span> 和 <span class="math inline">\(P_{s_i\pi(s_i)}(s_i&#39;)\)</span> 都是常量，其中$ 0 i &lt; |S|, i $）</p>
+<p>我们可以使用贝尔曼方程组高效求解值函数 <span class="math inline">\(V^\pi\)</span>。特别地，在有限状态MDP中（$|S| &lt; $），我们可以为 <span class="math inline">\(V^\pi(s)\)</span> 的每个状态 <span class="math inline">\(s\)</span> 写下一条方程，得到一个 <span class="math inline">\(|S|\)</span> 个变量的 <span class="math inline">\(|S|\)</span> 条方程的方程组，高效求解所有状态的值 <span class="math inline">\(V^\pi(s)\)</span>。（即由于策略已确定， <span class="math inline">\(V^\pi(s_i)\)</span> 可当作变量，<span class="math inline">\(R(s_i)\)</span> 和 <span class="math inline">\(P_{s_i\pi(s_i)}(s_i&#39;)\)</span> 都是常量，其中$ 0 i &lt; |S|, i \in R$）</p>
 <p>我们按下面这条公式定义<strong>最优值函数</strong>(即，依照该策略，每个状态都能取到最大的值) <span class="math display">\[
 V^*(s) = \max_\pi V^\pi(s)  \tag{1}
 \]</span> 换句话讲，这个就是使用任意策略我们能够得到的所有可能中，折扣奖励期望和最大的。下面是贝尔曼方程组版本的最优值函数（跳过策略，直接选取最优动作，使折扣奖励期望和最大）： <span class="math display">\[
@@ -467,7 +467,9 @@ V^{\pi^* } (s)= V^*(s) \geq V^\pi(s)
 <p>第一个算法，<strong>值迭代</strong>，如下：</p>
 <ol type="1">
 <li><p>对于每个状态 <span class="math inline">\(s\)</span>，初始化 <span class="math inline">\(V(s):=0\)</span></p></li>
-<li><p>重复直到收敛 { 对每个状态，更新 $V(s) := R(s) + max_{a A} <em>{s’}P</em>{sa}(s’)V(s’) $ }</p></li>
+<li><p>重复直到收敛 {</p>
+<p>对每个状态，更新 $V(s) := R(s) + \max_{a \in A} \gamma \sum_{s’}P_{sa}(s’)V(s’) $</p>
+<p>}</p></li>
 </ol>
 <p>此算法可以看成使用 贝尔曼方程 (2) 重复尝试去估计值函数。</p>
 <p>有两种可能的方式来执行算法内部循环的更新操作。 第一种是，<strong>同步更新</strong>，我们先算出每个状态 <span class="math inline">\(s\)</span> 对应的新值 <span class="math inline">\(V(s)\)</span>，然后用全部的新值去覆盖掉全部的旧值。这种操作里，算法可以看成实现了把值函数的当前估计映射到新估计上的“贝尔曼拷贝操作(Ballman backup operator)”。第二种是，<strong>异步更新</strong>。我们以某种顺序便利内部循环，每次都更新一个值。</p>
@@ -478,7 +480,8 @@ V^{\pi^* } (s)= V^*(s) \geq V^\pi(s)
 <li>重复直至收敛 {
 <ol type="a">
 <li>让 <span class="math inline">\(V:=V^{\pi}\)</span></li>
-<li>对于每个状态 <span class="math inline">\(s\)</span>，让 <span class="math inline">\(\pi(s) := arg \max_{a \in A} \sum_{s&#39;} P_{sa}(s&#39;) V(s&#39;)\)</span>。 }</li>
+<li>对于每个状态 <span class="math inline">\(s\)</span>，让 <span class="math inline">\(\pi(s) := arg \max_{a \in A} \sum_{s&#39;} P_{sa}(s&#39;) V(s&#39;)\)</span>。<br>
+}</li>
 </ol></li>
 </ol>
 <p>因此，在内部循环重复计算当前策略的值函数，然后用当前值函数更新策略（步骤(b)中找到的策略也叫关于值函数 <span class="math inline">\(V\)</span> 的贪心策略）。注意到步骤(a)可以用先前提到的求贝尔曼方程线性方程组的方式求解，对于特定的策略来讲，这只是一组拥有 <span class="math inline">\(|S|\)</span> 个变量的 <span class="math inline">\(|S|\)</span> 条方程的方程组。</p>
@@ -562,7 +565,7 @@ arg \min_{A,B} \sum_{i=1}^m \sum_{t=0}^{T-1}||s_{t+1}^{(i)} - (As_t^{(i)} + Ba_t
 <p>学到 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 之后，可以建立一个<strong>确定</strong>模型，在确定模型中，给定 <span class="math inline">\(s_t\)</span> 和 <span class="math inline">\(a_t\)</span> 输入 <span class="math inline">\(s_{t+1}\)</span> 是固定的。确切地讲，我们总是通过（5）计算 <span class="math inline">\(s_{t+1}\)</span> 。另外我们也可以建立一个<strong>随机</strong>模型，将 <span class="math inline">\(s_{t+1}\)</span> 作为输入的随机函数，建模如下： <span class="math display">\[
 s_{t+1}  = As_t + Ba_t + \epsilon_t
 \]</span> 其中 <span class="math inline">\(\epsilon_t\)</span> 是噪音项，通常取 <span class="math inline">\(\epsilon_t \cal {\sim} N( \rm 0, Σ)\)</span> 。（其中 协方差矩阵 <span class="math inline">\(Σ\)</span> 也可以用收集的数据直接估计 ）</p>
-<p>这里，我们把下一个状态 <span class="math inline">\(s_{t+1}\)</span> 写成当前状态和动作的线性函数；当然，非线性函数也是可行的。确切地，可以学习一个模型 <span class="math inline">\(s_{t+1} = A\phi_s{s_t} + B\phi_a(a_t)\)</span> ，其中 <span class="math inline">\(\phi_s\)</span> 和 <span class="math inline">\(\phi_a\)</span>是状态和动作的非线性映射。另外也可以使用非线性算法，比如局部权重线性回归，把 $s_{t+1} $ 作为 <span class="math inline">\(s_t\)</span> 和 <span class="math inline">\(a_t\)</span> 的函数来学习估计。用这些方法都可以建立确定或随机模型。</p>
+<p>这里，我们把下一个状态 <span class="math inline">\(s_{t+1}\)</span> 写成当前状态和动作的线性函数；当然，非线性函数也是可行的。确切地，可以学习一个模型 <span class="math inline">\(s_{t+1} = A\phi_s(s_t) + B\phi_a(a_t)\)</span> ，其中 <span class="math inline">\(\phi_s\)</span> 和 <span class="math inline">\(\phi_a\)</span>是状态和动作的非线性映射。另外也可以使用非线性算法，比如局部权重线性回归，把 $s_{t+1} $ 作为 <span class="math inline">\(s_t\)</span> 和 <span class="math inline">\(a_t\)</span> 的函数来学习估计。用这些方法都可以建立确定或随机模型。</p>
 <h4 id="拟合值迭代">4.2.2 拟合值迭代</h4>
 <p>现在我们描述用于近似连续状态MDP过程中值函数的<strong>拟合值迭代</strong>算法。方便继续，我们假设问题处在一个连续的状态空间 <span class="math inline">\(S = \mathbb{R}^n\)</span> ，但是动作空间 <span class="math inline">\(A\)</span> 很小而且是离散的。</p>
 <p>回想一下，在值迭代中，我们执行更新 <span class="math display">\[
